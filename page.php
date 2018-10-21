@@ -1,3 +1,13 @@
+<?php
+
+require_once __DIR__.'/vendor/autoload.php';
+use Dev\Load;
+use Dev\Database;
+
+$config = require_once 'config.php';
+$db = new Database($config);
+
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,25 +16,33 @@
 </head>
 <body>
 
+<?php
+$dataFromBase = $db->query("SELECT uid FROM download_table");
+if(empty($dataFromBase)) {
+// if (!(isset($dataFromBase[0]['uid']))) {
+	echo 'База данных пустая';
+} else {
+	$allDataFromBase = $db->query("SELECT * FROM download_table");
+	// $db->closeConnection();
+?>
 <table border="1">
-    <p>Первый вариант</p>
     <tr>
-        <th> Номер заказа </th>
-        <th> Имя товара </th>
-        <th> Цена </th>
-        <th> Количество </th>
-        <th> Имя оператора </th>
+        <th> UID </th>
+        <th> Name </th>
+        <th> Age </th>
+        <th> Phone </th>
+        <th> Gender </th>
     </tr>
 
-    <?php foreach ($query as $value) {?>
+    <?php foreach ($allDataFromBase as $value) {?>
         <tr>
-            <th> <?=$value['id']?> </th>
+            <th> <?=$value['uid']?> </th>
             <th> <?=$value['name']?> </th>
-            <th> <?=$value['price']?> </th>
-            <th> <?=$value['count']?> </th>
-            <th> <?=$value['op_name']?> </th>
+            <th> <?=$value['age']?> </th>
+            <th> <?=$value['phone']?> </th>
+            <th> <?=$value['gender']?> </th>
         </tr>
-    <?php } ?>
+    <?php }} ?>
 </table>
 
 <div><a href="index.php">Import data</a></div>

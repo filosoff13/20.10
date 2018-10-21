@@ -21,7 +21,11 @@ use Dev\Database;
 	<div><a href="page.php">View results</a></div>
 </form>
 
-<?php if (isset($_POST['import'])) {
+<?php 
+	$config = require_once 'config.php';
+	$db = new Database($config);
+
+if (isset($_POST['import'])) {
 	// here we can check the size
 	// print_r(basename($_FILES['downloadField']['size']));
 	// $loadFile = new Load($_FILES['downloadField']['tmp_name']);
@@ -35,14 +39,22 @@ use Dev\Database;
     		while(($data = fgetcsv($handle, 1000, ",")) !== FALSE){
         	$arrResult[] = $data;
 
+        	//check the structure of csv file
+        	// if ($data[0] <> 'UID' || $data[1] <> 'Name' || $data[2] <> 'Age' || $data[3] <> 'Email' || $data[4] <> 'Phone' || $data[5] <> 'Gender') {
+        	// if (!(is_integer($data[0])) || !(is_string($data[1])) || !(is_integer($data[2])) || !(is_string($data[3])) || !(is_integer($data[4])) || !(is_string($data[5]))) {
+        	// 	print_r(is_array($data[0]));
+        	// 	echo 'Uncorrect file';
+        	// 	$i = 0;
+        	// 	return false;
+        	// }
+        	//skip the first[0] row
         	if ($i == 0) {
         		$i++;
         		continue;
         	}
         	$i++;
         	$oldData = $db->query("SELECT uid FROM download_table WHERE uid = '$data[0]'");
-        	
-        	// print_r($oldData[0]['uid']);
+
         	if (isset($oldData[0]['uid']) && $data[0] == $oldData[0]['uid']) {
         		$db->query("DELETE FROM download_table WHERE uid = '$data[0]'");
         	}
@@ -54,10 +66,11 @@ use Dev\Database;
 		}
 	}
 
-	$config = require_once 'config.php';
-	$db = new Database($config);
 	$arrResult = transformFile($loadFile, $db);
+}
 
+if (isset($_POST['clearAllRecords'])) {
+	$db->query("DELETE FROM download_table");
 
 }
 ?>
