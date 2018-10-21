@@ -1,10 +1,14 @@
 <?php declare(strict_types=1);
-namespace Dev;
 
+namespace Dev;
+use Dev\Database;
+
+$config = require_once 'config.php';
 /**
  * class for loading and transfer .csv file into array
- */
-class Load
+ */ 
+//extends Database
+class Load 
 {
 	
 	protected $File;
@@ -12,10 +16,7 @@ class Load
 
 	function __construct($File)
 	{
-		// $File = 'users-1.csv';
 
-		// $arrResult  = array();
-		// print_r($File);
 		$this->File = $File;
 		$this->transformFile();
 		
@@ -24,15 +25,17 @@ class Load
 	private function transformFile()
 	{
 
-		$handle     = fopen($this->File, "r");
+		$i = 0;
+		$handle = fopen($this->File, "r");
 		if(empty($handle) === false) {
     		while(($data = fgetcsv($handle, 1000, ",")) !== FALSE){
         	$arrResult[] = $data;
     		}
     	fclose($handle);
 		}
-		print_r($arrResult);
 	}
+
 }
+
 
 ?>
